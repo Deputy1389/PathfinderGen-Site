@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    font: 16px Arial, sans-serif;
+}
+#wrapper {
+  width: 70%;     /* specify a width! */
+  padding-left: 5%;
+  margin: 0 auto; /* center */
+}
+	
+.container{
+    width: 100%;
+    float: left;
+    border: solid 1px blue;
+    text-align: center;
+}
+
+.container button{
+    display: inline-block;
+}
+
+#btn1{
+    float:left;
+}
+#btn3{
+    float:right;
+}
+
+.dropbtn {
+    background-color: #22b7f3;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #92d4ef;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+
+
+.dropdown a:hover {background-color: #f1f1f1}
+
+.show {display:block;}
+
+</style>
+</head>
+<script>
+function myFunction() {
+    document.getElementById("txtarea").innerHTML = select(data);
+}
+function newfunct() {
+    document.getElementById("txtarea").innerHTML = "";
+}
+function myFunction2() {
+    document.getElementById("txtarea2").innerHTML = select2(arr);
+}
+function newfunct() {
+    document.getElementById("txtarea2").innerHTML = "";
+}
+
+</script>
+<body>
+<h2>Pathfinder Adventure Generator</h2>
+
+
+<div id="wrapper">
+<p>Random Adventure Generation System is a tool used to save a Gamemaster’s time by removing the need to leaf through pages and pages of game books to develop a quick encounter, or adventure, for their players while they wait to get into the next setpiece. The application is a mobile-friendly, web-based application that allows a Gamemaster to, on the fly, generate an entire adventure’s worth of randomly generated encounters, appropriate to whatever terrain and level the Gamemaster requires.</p>
+
+<br />
+
+
+<h2>Choose an environment</h2>
+<p>Click on the button to open the dropdown menu.</p>
+
+<div class="dropdown">
+<button onclick="dropFunc()" class="dropbtn">Environment</button>
+  <div id="myDropdown" class="dropdown-content">
+	<a id="allEnv" 		href="#allEnv" 		onclick="setAny()" >All</a>
+    <a id="aquatic" 	href="#aquatic" 	onclick="setAquatic()">Aquatic</a>
+	<a id="desert" 		href="#desert" 		onclick="setDesert()">Desert</a>
+	<a id="forest" 		href="#forest" 		onclick="setForest()">Forest</a>
+	<a id="hills" 		href="#hills" 		onclick="setHills()">Hills</a>
+	<a id="mountains" 	href="#mountains" 	onclick="setMountains()">Mountains</a>
+	<a id="plains"		href="#plains" 		onclick="setPlains()">Plains</a>
+	<a id="swamp" 		href="#swamp" 		onclick="setSwamp()">Swamp</a>
+  </div>
+</div>
+
+<script>
+/* When the user clicks on the button, 
+toggle between hiding and showing the dropdown content */
+function dropFunc() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>
+<br />
+<br />
+
+<form oninput=" x.value=parseInt(rangeVal.value)">0
+	<input type="range" min="0" max="30" id="rangeVal" value="0">30
+	<br />
+	Combat Rating: <output name="x" for="rangeVal"></output>
+</form>
+
+<br />
+<script src=database.js></script>
+<script>
+
+var environment = "Any";
+var challenge = "1";
+
+//Beginning of environment setters.
+function setAny(){
+    environment = "any";
+}
+function setAquatic(){
+    environment = "aquatic";
+}
+function setDesert(){
+    environment = "desert";
+}
+function setSwamp(){
+    environment = "swamp";
+}
+function setForest(){
+    environment = "forest";
+}
+function setHills(){
+    environment = "hills";
+}
+function setMountains(){
+    environment = "mountains";
+}
+function setPlains(){
+    environment = "plains";
+}
+//End of setters.
+function generateEncounterPool(){
+    console.log("Generating Encounter");
+    console.log("Selecting Environment");
+    var environment = environmentSelect();
+    challenge = document.getElementById("rangeVal").value;
+    console.log("Selecting monsters with environment: " + environment + " and CR: " + challenge);
+    var crMonster = crSelect(challenge);
+}
+
+/*
+    environmentSelect returns a selection based on user-input environment.
+*/
+function environmentSelect(envArg, encounter){
+    var returnMe = [];
+    for (var i = 0; i < encounter.length; i++){ //makes a selection based on the user's CR
+        var subj = encounter[i];
+        //console.log(toString(subj));
+        var ecoStr = subj.ECO;
+        if(typeof ecoStr != "undefined"){
+            if(ecoStr.indexOf(envArg) >= 0 || envArg == "Any"){
+                console.log(envArg == "Any");
+                returnMe.push(subj);
+            }
+        }
+        if(typeof ecoStr == "undefined" && envArg == "Any"){
+            returnMe.push(subj);
+        }
+    }    
+    
+    return returnMe;
+}
+
+/*
+    crSelect returns a selection based on an appropiate challenge.
+*/
+function crSelect(challenge, encounter){
+    var returnMe = [];
+    for (var i = 0; i < encounter.length; i++){ //makes a selection based on the user's CR
+        var subj = encounter[i];
+        if(subj.CR <= (parseInt(challenge) + 2)){
+            if(parseInt(challenge) - subj.CR < 9)
+            returnMe.push(subj);
+        }
+    }
+    return returnMe;
+}
+
+function buildEncounter(selection, challenge){
+    var selectionInt = Math.floor(Math.floor(Math.random() * selection.length));
+    var selectionObject = selection[selectionInt];
+    if(parseInt(challenge) - selectionObject.CR < 3)
+        return toString(selectionObject)
+    else{
+        var crGap = parseInt(challenge) - parseInt(selectionObject.CR); 
+        if(selectionInt % 3 == 0){
+            if(parseInt(crGap) == 1)
+                return "2x " + toString(selectionObject)
+            if(parseInt(crGap) == 2)
+                return "2x " + toString(selectionObject)
+            if(parseInt(crGap) == 3)
+                return "3x " + toString(selectionObject)
+
+            if(parseInt(crGap) == 4)
+                return "4x " + toString(selectionObject)
+
+            if(parseInt(crGap) == 5)
+                return "6x " + toString(selectionObject)
+
+            if(parseInt(crGap) == 6)
+                return "8x " + toString(selectionObject)
+
+            if(parseInt(crGap) == 7)
+                return "12x " + toString(selectionObject)
+
+            if(parseInt(crGap) == 8)
+                return "16x " + toString(selectionObject)
+            return "CR Gap was " + parseInt(crGap) + "24x " + toString(selectionObject)
+        }
+        else{
+           return toString(selectionObject) + "\n" + buildEncounterMulti(selection,selectionObject,crGap - parseInt(selectionObject.CR));
+        }//if this breaks, just delete the things for multi build
+    }
+}
+function buildEncounterMulti(selection, creature, crGap){
+    var selectionInt = Math.floor(Math.floor(Math.random() * selection.length));
+    var selectionObject = selection[selectionInt];
+    if(crGap < 0){
+        return "";
+    }
+    console.log("BUILDING");
+    if(parseInt(challenge) - selectionObject.CR < 3)
+        return toString(selectionObject);
+    else{
+        var crGap = parseInt(challenge) - parseInt(creature.CR); 
+        if(selectionInt % 3 == 0){
+            if(parseInt(crGap) == 1)
+                return "2x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);
+            if(parseInt(crGap) == 2)
+                return "2x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);
+            if(parseInt(crGap) == 3)
+                return "3x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);
+
+            if(parseInt(crGap) == 4)
+                return "4x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);
+
+            if(parseInt(crGap) == 5)    
+                return "6x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);selection,selectionObject,crGap - parseInt(selectionObject.CR);
+
+            if(parseInt(crGap) == 6)
+                return "8x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);
+
+            if(parseInt(crGap) == 7)
+                return "12x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);
+
+            if(parseInt(crGap) == 8)
+                return "16x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);
+            return "CR Gap was " + parseInt(crGap) + "24x " + toString(selectionObject) + selection,selectionObject,crGap - parseInt(selectionObject.CR);
+        }
+        else{
+           return toString(selectionObject) + "\n" + buildEncounterMulti(selection,selectionObject,crGap,parseInt(selectionObject.CR));
+        }
+    }}
+//This was the original selection function. Being repurposed to call other functions.
+function select (encounter){
+    var selection = []; 
+    challenge = document.getElementById("rangeVal").value;
+    selection = crSelect(challenge, encounter);
+    console.log("Calculated on CR: ." + challenge);
+    console.log(selection.length);
+    var tmp = selection;
+    selection = environmentSelect(environment,selection);
+    console.log("Calculated on " + environment);
+    console.log(selection.length);
+    
+    return buildEncounter(selection, challenge);
+
+}
+
+function toString(selectionObject){
+    return selectionObject.NAME + " CR: " + selectionObject.CR + " XP: " + selectionObject.XP + " " + selectionObject.DATA + " Ecology: " + selectionObject.ECO + " Organization: " + selectionObject.ORG + " Treasure: " + selectionObject.TREASURE;
+}
+ </script>
+
+<button onclick="myFunction()" class="dropbtn">Generate</button>
+<button onclick="newfunct()" class="dropbtn">Clear</button>
+
+<textarea id="txtarea" rows="20" cols="110"></textarea>
+
+<p>Ideas for sub-plots:</p>
+<script src=event.js></script>
+<script>
+function select2(event) {
+    return (arr[Math.floor(Math.random()*90)]);
+}
+</script>
+
+<button onclick="myFunction2()" class="dropbtn">Generate</button>
+<button onclick="newfunct2()" class="dropbtn">Clear</button>
+
+<textarea id="txtarea2" rows="10" cols="110"></textarea>
+
+<p>Your adventure awaits!:</p>
+</div>
+<div class="three"></div>
+
+
+</div>
+
+<p>Created by Just Bees</p>
+
+
+
+
+</body>
+</html>
+
+
